@@ -6,7 +6,7 @@ import { User } from '../modules/user/user.schema';
 import { Movie } from '../modules/content/schemas/movie.schema';
 import { TVShow } from '../modules/content/schemas/tvshow.schema';
 
-async function seed() {
+async function initialize() {
   const app = await NestFactory.createApplicationContext(AppModule);
 
   const userModel = app.get<Model<User>>(getModelToken(User.name));
@@ -20,7 +20,7 @@ async function seed() {
     tvShowModel.deleteMany({}),
   ]);
 
-  // Seed users
+  // initialize users
   const users = await userModel.insertMany([
     {
       username: 'john_doe',
@@ -40,7 +40,7 @@ async function seed() {
     },
   ]);
 
-  // Seed movies
+  // initialize movies
   const movies = await movieModel.insertMany([
     {
       title: 'The Matrix',
@@ -84,7 +84,7 @@ async function seed() {
     },
   ]);
 
-  // Seed TV shows
+  // initialize TV shows
   const tvShows = await tvShowModel.insertMany([
     {
       title: 'Breaking Bad',
@@ -151,7 +151,7 @@ async function seed() {
     },
   ]);
 
-  console.log('✅ Seed data created successfully!');
+  console.log('✅ initialize data created successfully!');
   console.log(`👥 Users: ${users.length}`);
   console.log(`🎬 Movies: ${movies.length}`);
   console.log(`📺 TV Shows: ${tvShows.length}`);
@@ -162,9 +162,9 @@ async function seed() {
   await app.close();
 }
 
-seed()
+initialize()
   .then(() => process.exit(0))
   .catch(err => {
-    console.error('❌ Seed failed:', err);
+    console.error('❌ initialize failed:', err);
     process.exit(1);
   });

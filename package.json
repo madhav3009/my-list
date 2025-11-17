@@ -10,7 +10,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "ts-node src/scripts/seed-data.ts"
+    "initialize-data": "ts-node src/scripts/initialize-data.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",

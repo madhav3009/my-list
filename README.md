@@ -1,10 +1,10 @@
-# ⭐ MY OTT – My List Feature (Stage Assessment)
+# MY OTT – My List Feature (Stage Assessment)
 
 **Tech Stack:** NestJS · MongoDB · Redis
 
 ---
 
-## 📌 Features
+## Features
 
 ### **Functional Requirements**
 - Add to My List (movie or TV show) with duplicate protection
@@ -18,14 +18,14 @@
 
 ---
 
-## 🧰 Prerequisites
+## Prerequisites
 - Node.js **v18+**
 - Docker & Docker Compose
 - npm or yarn
 
 ---
 
-## 🛠️ Setup Instructions
+## Setup Instructions
 
 ### 1. Clone the Repository
 ```bash
@@ -54,7 +54,7 @@ npm run initialize-data
 
 ---
 
-## 🚀 Start the Application
+## Start the Application
 ```bash
 npm run start:dev
 ```
@@ -63,7 +63,7 @@ npm run start:dev
 
 ---
 
-## 📡 API Endpoints
+## API Endpoints
 
 **Base Path:** `/my-list`
 
@@ -72,7 +72,7 @@ npm run start:dev
 x-user-id: <USER_ID>
 ```
 
-### ➕ Add to My List
+### Add to My List
 **Endpoint:** `POST /my-list`
 
 **Request Body:**
@@ -102,7 +102,7 @@ curl -X POST http://localhost:3000/my-list \
 
 ---
 
-### ❌ Remove from My List
+### Remove from My List
 **Endpoint:** `DELETE /my-list/:contentId`
 
 **Success Response:**
@@ -116,7 +116,7 @@ curl -X POST http://localhost:3000/my-list \
 
 ---
 
-### 📄 Get My List
+### Get My List
 **Endpoint:** `GET /my-list?page=1&limit=10`
 
 **Response:**
@@ -133,7 +133,7 @@ curl -X POST http://localhost:3000/my-list \
 ---
 
 
-## 📝 Assumptions 
+## Assumptions 
 1. **Authentication**: Mock authentication via x-user-id header for this assignment. Production would use JWT 
    tokens.
 2. **Content Validation**: Assumes movies and TV shows exist and are validated before adding to list. 
@@ -145,12 +145,12 @@ curl -X POST http://localhost:3000/my-list \
 
 ---
 
-## 🧩 Architecture & Design Choices
+## Architecture & Design Choices
 
-### 📦 MongoDB Schema
+### MongoDB Schema
 ```typescript
 MyList {
-  userId: string,        // unique + indexed
+  userId: string,       
   items: [
     {
       contentId: string,
@@ -162,7 +162,7 @@ MyList {
 }
 ```
 
-### 🧠 Key Design Decisions
+### Key Design Decisions
 
 **Embedded Items (Array Model)**
 - Fast single-document reads
@@ -176,9 +176,6 @@ MyList {
 { userId: 1, "items.contentId": 1 }      // duplicate check
 { userId: 1, "items.addedAt": -1 }       // sorted fetch
 ```
-
-**Denormalized Storage**
-- Only content IDs stored → metadata fetched separately
 
 ---
 
@@ -198,7 +195,7 @@ MyList {
 
 ---
 
-## 📈 Scalability
+## Scalability
 
 ### Supports Today
 - Thousands of items per user
@@ -213,7 +210,7 @@ MyList {
 
 ---
 
-## 🐛 Error Handling
+## Error Handling
 - DTO validation
 - 409 for duplicates
 - 404 for missing content/list
@@ -221,14 +218,14 @@ MyList {
 
 ---
 
-## 🔐 Security
-- `x-user-id` header for this assessment
+## Security
+- `x-user-id` header for this assessment production version → JWT auth
 - Inputs validated
-- Production version → JWT auth
+
 
 ---
 
-## 📊 Index Summary
+## Index Summary
 ```javascript
 // MyList
 { userId: 1, unique: true }

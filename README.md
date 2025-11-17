@@ -1,267 +1,245 @@
-My List Feature – MY OTT (Stage Assessment)
+# ⭐ MY OTT – My List Feature (Stage Assessment)
 
-Tech Stack: NestJS · MongoDB · Redis
+**Tech Stack:** NestJS · MongoDB · Redis
 
-Features
-Functional Requirements
+---
 
-Add to My List: Add movies or TV shows to a user’s personal list with duplicate protection.
+## 📌 Features
 
-Remove from My List: Remove a specific item from the list.
+### **Functional Requirements**
+- Add to My List (movie or TV show) with duplicate protection
+- Remove from My List
+- Get User List with pagination sorted by latest added item
 
-Get User List: Fetch paginated items, always sorted by most recently added.
+### **Non-Functional Requirements**
+- Sub-10ms read latency using Redis cache
+- Optimized MongoDB indexes
+- Full integration test coverage
 
-Non-Functional Requirements
+---
 
-High Performance: Sub-10ms responses using Redis caching for reads.
+## 🧰 Prerequisites
+- Node.js **v18+**
+- Docker & Docker Compose
+- npm or yarn
 
-Scalability: Optimized indexing and efficient MongoDB queries.
+---
 
-Testing: Complete integration test coverage across all endpoints.
+## 🛠️ Setup Instructions
 
-Prerequisites
-
-Node.js v18+
-
-Docker + Docker Compose
-
-npm or yarn
-
-🛠️ Setup Instructions
-1. Clone the Repository
+### 1. Clone the Repository
+```bash
 git clone https://github.com/madhav3009/my-ott-1
 cd stage-project
+```
 
-2. Install Dependencies
+### 2. Install Dependencies
+```bash
 npm install
+```
 
-3. Environment Setup
+### 3. Environment Setup
+`.env` file is already included.
 
-A sample .env file is already included in the repo.
-
-4. Start Infrastructure (MongoDB + Redis)
+### 4. Start Infrastructure (MongoDB + Redis)
+```bash
 docker-compose up -d
 docker-compose ps
+```
 
-5. Add Initial Data
+### 5. Add Initial Data
+```bash
 npm run initialize-data
+```
 
+---
 
-This command initializes:
-
-2 demo users
-
-5 movies
-
-4 TV shows
-
-6. Start the Application
-
-Development (with hot reload)
-
+## 🚀 Start the Application
+```bash
 npm run start:dev
+```
 
+**Base URL:** `http://localhost:3000`
 
-Production
+---
 
-npm run build
-npm run start:prod
+## 📡 API Endpoints
 
+**Base Path:** `/my-list`
 
-API Base URL: http://localhost:3000
+**Authentication Header:**
+```
+x-user-id: <USER_ID>
+```
 
-🧪 Tests
-Run All Integration Tests
-npm run test:e2e
+### ➕ Add to My List
+**Endpoint:** `POST /my-list`
 
-With Coverage
-npm run test:e2e -- --coverage
-
-Run a Specific Suite
-npm run test:e2e -- -t "POST /my-list"
-
-📡 API Endpoints
-
-Base URL:
-
-http://localhost:3000/my-list
-
-Authentication
-
-Every request must include:
-
-x-user-id: <user-id>
-
-1. Add to My List
-
-POST /my-list
-
+**Request Body:**
+```json
 {
   "contentId": "CONTENT_ID",
   "contentType": "movie"
 }
+```
 
-
-Successful Response:
-
+**Success Response:**
+```json
 {
   "success": true,
   "message": "Item added to your list successfully",
-  "data": { ... }
+  "data": { }
 }
+```
 
-
-cURL:
-
+**cURL Example:**
+```bash
 curl -X POST http://localhost:3000/my-list \
   -H "Content-Type: application/json" \
   -H "x-user-id: mock-user-id" \
-  -d '{"contentId": "...", "contentType": "movie"}'
+  -d '{"contentId":"...","contentType":"movie"}'
+```
 
-2. Remove from My List
+---
 
-DELETE /my-list/:contentId
+### ❌ Remove from My List
+**Endpoint:** `DELETE /my-list/:contentId`
 
-Success:
-
+**Success Response:**
+```json
 {
   "success": true,
   "message": "Item removed from your list successfully",
-  "data": { ... }
+  "data": { }
 }
+```
 
-3. Get My List
+---
 
-GET /my-list?page=1&limit=10
+### 📄 Get My List
+**Endpoint:** `GET /my-list?page=1&limit=10`
 
-Response:
-
+**Response:**
+```json
 {
   "success": true,
   "data": {
-    "items": [...],
-    "pagination": { ... }
+    "items": [],
+    "pagination": { }
   }
 }
+```
 
-🏗️ Assumptions
+---
 
-Most OTT users don’t keep thousands of items in their list.
 
-So each user is allowed up to 50 items in My List.
+## 📝 Assumptions 
+1. **Authentication**: Mock authentication via x-user-id header for this assignment. Production would use JWT 
+   tokens.
+2. **Content Validation**: Assumes movies and TV shows exist and are validated before adding to list. 
+3. **List Size**: Assumes reasonable list sizes (<5000 items per user). For larger lists, consider alternative 
+   approaches. 
+4. **Cache Strategy**: Redis is assumed to be available. Falls back to direct DB queries if Redis is unavailable. 5. **Concurrent Users**: Design supports high concurrency through caching and atomic operations.
+6. **Data Consistency**: Strong consistency preferred over eventual consistency for user lists.
 
-This enables a simpler schema using embedded arrays instead of a separate mapping table.
 
-Tradeoff:
-If the list were unbounded, document size would grow uncontrollably, making writes slower and approaching MongoDB’s 16 MB document limit.
+---
 
-🏗️ Architecture & Design Decisions
-Database Schema – MyList
-{
-  userId: string,       // unique + indexed
+## 🧩 Architecture & Design Choices
+
+### 📦 MongoDB Schema
+```typescript
+MyList {
+  userId: string,        // unique + indexed
   items: [
     {
       contentId: string,
-      contentType: 'movie' | 'tvshow',
+      contentType: "movie" | "tvshow",
       addedAt: Date
     }
   ],
   timestamps: true
 }
+```
 
-Key Design Choices
-1. Embedded Items
+### 🧠 Key Design Decisions
 
-All list items live inside one document.
-This gives:
+**Embedded Items (Array Model)**
+- Fast single-document reads
+- Atomic `$push`/`$pull`
+- No JOINs
+- Perfect for ≤ 50 items per user
 
-Atomic add/remove operations
+**Important Indexes:**
+```javascript
+{ userId: 1 }
+{ userId: 1, "items.contentId": 1 }      // duplicate check
+{ userId: 1, "items.addedAt": -1 }       // sorted fetch
+```
 
-Single-document reads
+**Denormalized Storage**
+- Only content IDs stored → metadata fetched separately
 
-Minimal joins/lookup overhead
+---
 
-2. Important Indexes
+## ⚡ Performance Optimizations
 
-{ userId: 1 } – fast lookup
+### Redis Caching
+- **Key:** `mylist:{userId}:{page}:{limit}`
+- **TTL:** 1 hour
+- Cache invalidated on add/remove
+- **Read latency:** < 10ms
 
-{ userId: 1, 'items.contentId': 1 } – O(1) duplicate check
+### MongoDB Optimizations
+- `.lean()` queries
+- Projection
+- Atomic updates
+- App-level pagination
 
-{ userId: 1, 'items.addedAt': -1 } – fast sorted retrieval
+---
 
-3. Denormalized Storage
+## 📈 Scalability
 
-Only IDs are stored—content metadata is fetched separately.
-Keeps the list light and avoids sync issues.
+### Supports Today
+- Thousands of items per user
+- High read traffic via Redis
+- Horizontally scalable
 
-🚀 Performance Optimizations
-Redis Caching
+### Future Enhancements
+- Sharding by `userId`
+- Separate list-item collection
+- DB pagination (skip/limit)
+- CDN caching
 
-Key pattern: mylist:{userId}:{page}:{limit}
+---
 
-TTL: 1 hour
+## 🐛 Error Handling
+- DTO validation
+- 409 for duplicates
+- 404 for missing content/list
+- Structured 500 logs
 
-Cache invalidated on add/remove
+---
 
-Read responses drop to sub-10ms
+## 🔐 Security
+- `x-user-id` header for this assessment
+- Inputs validated
+- Production version → JWT auth
 
-MongoDB Optimizations
+---
 
-.lean() for read queries
-
-Projection to fetch only necessary fields
-
-Application-level pagination for predictable ordering
-
-Atomic $push / $pull operations
-
-📈 Scalability
-What this architecture supports today
-
-Up to a few thousand items per user (well below 16MB limit)
-
-Read-heavy traffic via Redis
-
-Easy horizontal scaling for the service and Redis
-
-If the list needs to scale beyond this
-
-Possible upgrades:
-
-Sharding by userId
-
-Splitting items into separate paginated collections
-
-Using DB-level pagination (skip/limit)
-
-Adding CDN caching for popular fetches
-
-🐛 Error Handling
-
-DTO validation
-
-404 for missing content or missing user list
-
-409 for duplicates
-
-Structured 500 responses with logs
-
-🔐 Security
-
-For this assignment: simple x-user-id header
-
-Inputs validated to avoid NoSQL injections
-
-Production would switch to proper JWT-based auth
-
-🔍 Index Summary
-// MyList collection
+## 📊 Index Summary
+```javascript
+// MyList
 { userId: 1, unique: true }
-{ userId: 1, 'items.contentId': 1 }
-{ userId: 1, 'items.addedAt': -1 }
+{ userId: 1, "items.contentId": 1 }
+{ userId: 1, "items.addedAt": -1 }
 
-// User collection
+// User
 { username: 1 }
 
-// Movie / TVShow collections
+// Movies / TV Shows
 { title: 1, genres: 1 }
+```
+
+---

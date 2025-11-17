@@ -115,7 +115,7 @@ cURL:
 
 curl -X POST http://localhost:3000/my-list \
   -H "Content-Type: application/json" \
-  -H "x-user-id: <your-user-id>" \
+  -H "x-user-id: mock-user-id" \
   -d '{"contentId": "...", "contentType": "movie"}'
 
 2. Remove from My List

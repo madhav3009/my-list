@@ -23,133 +23,129 @@ async function initialize() {
   // initialize users
   const users = await userModel.insertMany([
     {
-      username: 'john_doe',
+      username: 'madhav',
       preferences: {
-        favoriteGenres: ['Action', 'SciFi'],
+        favoriteGenres: ['Action', 'Drama'],
         dislikedGenres: ['Horror'],
       },
       watchHistory: [],
     },
     {
-      username: 'jane_smith',
+      username: 'stage_user',
       preferences: {
-        favoriteGenres: ['Drama', 'Romance'],
+        favoriteGenres: ['Romance', 'Comedy'],
         dislikedGenres: ['Horror'],
       },
       watchHistory: [],
     },
   ]);
+  
 
   // initialize movies
   const movies = await movieModel.insertMany([
     {
-      title: 'The Matrix',
-      description: 'A computer hacker learns about the true nature of reality.',
-      genres: ['Action', 'SciFi'],
-      releaseDate: new Date('1999-03-31'),
-      director: 'Wachowski Brothers',
-      actors: ['Keanu Reeves', 'Laurence Fishburne', 'Carrie-Anne Moss'],
+      title: '3 Idiots',
+      description: 'Three engineering students navigate friendship and pressure.',
+      genres: ['Drama', 'Comedy'],
+      releaseDate: new Date('2009-12-25'),
+      director: 'Rajkumar Hirani',
+      actors: ['Aamir Khan', 'R. Madhavan', 'Sharman Joshi'],
     },
     {
-      title: 'Inception',
-      description: 'A thief who steals corporate secrets through dream-sharing technology.',
-      genres: ['Action', 'SciFi'],
-      releaseDate: new Date('2010-07-16'),
-      director: 'Christopher Nolan',
-      actors: ['Leonardo DiCaprio', 'Joseph Gordon-Levitt', 'Ellen Page'],
+      title: 'Bahubali: The Beginning',
+      description: 'The epic rise of Shivudu as he discovers his destiny.',
+      genres: ['Action', 'Fantasy'],
+      releaseDate: new Date('2015-07-10'),
+      director: 'S. S. Rajamouli',
+      actors: ['Prabhas', 'Rana Daggubati', 'Anushka Shetty'],
     },
     {
-      title: 'The Shawshank Redemption',
-      description: 'Two imprisoned men bond over years, finding solace and redemption.',
-      genres: ['Drama'],
-      releaseDate: new Date('1994-09-23'),
-      director: 'Frank Darabont',
-      actors: ['Tim Robbins', 'Morgan Freeman'],
+      title: 'Bahubali: The Conclusion',
+      description: 'Mahendra Baahubali sets out to avenge his father and reclaim the throne.',
+      genres: ['Action', 'Fantasy'],
+      releaseDate: new Date('2017-04-28'),
+      director: 'S. S. Rajamouli',
+      actors: ['Prabhas', 'Anushka Shetty', 'Rana Daggubati'],
     },
     {
-      title: 'The Dark Knight',
-      description: 'Batman faces the Joker in a battle for Gotham\'s soul.',
+      title: 'Dangal',
+      description: 'A father trains his daughters to become world-class wrestlers.',
+      genres: ['Drama', 'Sports'],
+      releaseDate: new Date('2016-12-23'),
+      director: 'Nitesh Tiwari',
+      actors: ['Aamir Khan', 'Fatima Sana Shaikh', 'Sanya Malhotra'],
+    },
+    {
+      title: 'KGF: Chapter 1',
+      description: 'The rise of Rocky in the gold mines of Kolar.',
       genres: ['Action', 'Drama'],
-      releaseDate: new Date('2008-07-18'),
-      director: 'Christopher Nolan',
-      actors: ['Christian Bale', 'Heath Ledger', 'Aaron Eckhart'],
-    },
-    {
-      title: 'Interstellar',
-      description: 'A team of explorers travel through a wormhole in space.',
-      genres: ['SciFi', 'Drama'],
-      releaseDate: new Date('2014-11-07'),
-      director: 'Christopher Nolan',
-      actors: ['Matthew McConaughey', 'Anne Hathaway', 'Jessica Chastain'],
+      releaseDate: new Date('2018-12-21'),
+      director: 'Prashanth Neel',
+      actors: ['Yash', 'Srinidhi Shetty', 'Ananth Nag'],
     },
   ]);
+  
 
   // initialize TV shows
   const tvShows = await tvShowModel.insertMany([
     {
-      title: 'Breaking Bad',
-      description: 'A high school chemistry teacher turned methamphetamine producer.',
-      genres: ['Drama'],
+      title: 'Sacred Games',
+      description: 'A cop uncovers a criminal network threatening Mumbai.',
+      genres: ['Thriller', 'Crime', 'Drama'],
       episodes: [
         {
           episodeNumber: 1,
           seasonNumber: 1,
-          releaseDate: new Date('2008-01-20'),
-          director: 'Vince Gilligan',
-          actors: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn'],
-        },
-        {
-          episodeNumber: 2,
-          seasonNumber: 1,
-          releaseDate: new Date('2008-01-27'),
-          director: 'Vince Gilligan',
-          actors: ['Bryan Cranston', 'Aaron Paul', 'Anna Gunn'],
+          releaseDate: new Date('2018-07-06'),
+          director: 'Vikramaditya Motwane',
+          actors: ['Saif Ali Khan', 'Nawazuddin Siddiqui', 'Radhika Apte'],
         },
       ],
     },
     {
-      title: 'Stranger Things',
-      description: 'A group of kids uncover supernatural mysteries in their town.',
-      genres: ['SciFi', 'Horror', 'Drama'],
+      title: 'Mirzapur',
+      description: 'A mafia-driven power struggle in a lawless town.',
+      genres: ['Crime', 'Action', 'Drama'],
       episodes: [
         {
           episodeNumber: 1,
           seasonNumber: 1,
-          releaseDate: new Date('2016-07-15'),
-          director: 'Duffer Brothers',
-          actors: ['Millie Bobby Brown', 'Finn Wolfhard', 'Winona Ryder'],
+          releaseDate: new Date('2018-11-16'),
+          director: 'Karan Anshuman',
+          actors: ['Pankaj Tripathi', 'Ali Fazal', 'Divyenndu'],
         },
       ],
     },
     {
-      title: 'The Office',
-      description: 'A mockumentary about office employees.',
-      genres: ['Comedy'],
+      title: 'The Family Man',
+      description: 'A middle-class man secretly working as an intelligence officer.',
+      genres: ['Action', 'Thriller', 'Drama'],
       episodes: [
         {
           episodeNumber: 1,
           seasonNumber: 1,
-          releaseDate: new Date('2005-03-24'),
-          director: 'Greg Daniels',
-          actors: ['Steve Carell', 'Rainn Wilson', 'John Krasinski'],
+          releaseDate: new Date('2019-09-20'),
+          director: 'Raj & DK',
+          actors: ['Manoj Bajpayee', 'Priyamani'],
         },
       ],
     },
     {
-      title: 'Game of Thrones',
-      description: 'Noble families vie for control of the Iron Throne.',
-      genres: ['Fantasy', 'Drama', 'Action'],
+      title: 'Panchayat',
+      description: 'A young man becomes secretary of a village panchayat.',
+      genres: ['Comedy', 'Drama'],
       episodes: [
         {
           episodeNumber: 1,
           seasonNumber: 1,
-          releaseDate: new Date('2011-04-17'),
-          director: 'David Benioff',
-          actors: ['Emilia Clarke', 'Kit Harington', 'Peter Dinklage'],
+          releaseDate: new Date('2020-04-03'),
+          director: 'Deepak Kumar Mishra',
+          actors: ['Jitendra Kumar', 'Raghubir Yadav', 'Neena Gupta'],
         },
       ],
     },
   ]);
+  
 
   console.log('✅ initialize data created successfully!');
   console.log(`👥 Users: ${users.length}`);

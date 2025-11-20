@@ -105,6 +105,13 @@ curl -X POST http://localhost:3000/my-list \
 ### Remove from My List
 **Endpoint:** `DELETE /my-list/:contentId`
 
+**cURL Example:**
+```bash
+curl -X DELETE http://localhost:3000/my-list/CONTENT_ID \
+  -H "Content-Type: application/json" \
+  -H "x-user-id: mock-user-id" \
+```
+
 **Success Response:**
 ```json
 {
@@ -114,10 +121,15 @@ curl -X POST http://localhost:3000/my-list \
 }
 ```
 
----
-
 ### Get My List
 **Endpoint:** `GET /my-list?page=1&limit=10`
+
+**cURL Example:**
+```bash
+curl --location 'http://localhost:3000/my-list?page=1&limit=10' \
+--header 'Content-Type: application/json' \
+--header 'x-user-id: mock-user-id' \
+```
 
 **Response:**
 ```json
@@ -137,9 +149,10 @@ curl -X POST http://localhost:3000/my-list \
 1. **Authentication**: Mock authentication via x-user-id header for this assignment. Production would use JWT 
    tokens.
 2. **Content Validation**: Assumes movies and TV shows exist and are validated before adding to list. 
-3. **List Size**: Assumes reasonable list sizes (<5000 items per user). For larger lists, consider alternative 
+3. **List Size**: Assumes reasonable list sizes (Configurable - 16MB Limit - Added 2 for testing). For larger lists, consider alternative 
    approaches. 
-4. **Cache Strategy**: Redis is assumed to be available. Falls back to direct DB queries if Redis is unavailable. 5. **Concurrent Users**: Design supports high concurrency through caching and atomic operations.
+4. **Cache Strategy**: Redis is assumed to be available. Falls back to direct DB queries if Redis is unavailable.
+5. **Concurrent Users**: Design supports high concurrency through caching and atomic operations.
 6. **Data Consistency**: Strong consistency preferred over eventual consistency for user lists.
 
 

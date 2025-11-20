@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, Inject } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, Inject, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -7,6 +7,7 @@ import { MyList, ListItem } from './my-list.schema';
 import { ContentService } from '../content/content.service';
 import { AddToListDto } from './dto/add-to-list.dto';
 import { ListItemsDto } from './dto/list-items.dto';
+import { MAX_MY_LIST_ITEMS_LIMIT } from './my-list.constants';
 
 @Injectable()
 export class MyListService {
@@ -21,7 +22,8 @@ export class MyListService {
   }
 
   private async invalidateCache(userId: string): Promise<void> {
-    // Invalidate all cache entries for the user
+    // Invalidate all cache entries for the user - Ideally this won't require to delete multiple keys
+    // But since i've allowed caching for variable pagination params
     const keys = await this.cacheManager.store.keys(`mylist:${userId}:*`);
     await Promise.all(keys.map(key => this.cacheManager.del(key)));
   }
@@ -41,6 +43,11 @@ export class MyListService {
         userId,
         items: [],
       });
+    }
+
+    // Max item limit check
+    if(userList.items.length >= MAX_MY_LIST_ITEMS_LIMIT){
+      throw new ForbiddenException(`You can have a maximum of ${MAX_MY_LIST_ITEMS_LIMIT} items in your list. Please remove some before adding new ones`);
     }
 
     // Check for duplicates
@@ -66,7 +73,7 @@ export class MyListService {
     const userList = await this.myListModel.findOne({ userId }).exec();
     
     if (!userList) {
-      throw new NotFoundException('List not found');
+      throw new NotFoundException('Content not found in your list');
     }
 
     const initialLength = userList.items.length;

@@ -2,8 +2,8 @@ import { Controller, Post, Delete, Get, Body, Param, Query, HttpCode, HttpStatus
 import { MyListService } from './my-list.service';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { AddToListDto } from './dto/add-to-list.dto';
-import { RemoveFromListDto } from './dto/remove-from-list.dto';
 import { ListItemsDto } from './dto/list-items.dto';
+import { handleError } from '../../common/utils/handle-error';
 
 @Controller('my-list')
 export class MyListController {
@@ -11,16 +11,17 @@ export class MyListController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async addToList(
-    @CurrentUser() userId: string,
-    @Body() dto: AddToListDto,
-  ) {
-    const result = await this.myListService.addToList(userId, dto);
-    return {
-      success: true,
-      message: 'Item added to your list successfully',
-      data: result,
-    };
+  async addToList(@CurrentUser() userId: string, @Body() dto: AddToListDto) {
+    try {
+      const result = await this.myListService.addToList(userId, dto);
+      return {
+        success: true,
+        message: 'Item added to your list',
+        data: result,
+      };
+    } catch (error) {
+      handleError(error);
+    }
   }
 
   @Delete(':contentId')

@@ -211,7 +211,7 @@ MyList {
 ## Scalability
 
 ### Supports Today
-- Thousands of items per user
+- Configurable no of items in list - Added 2 for testing - 16MB Mongo Cap
 - High read traffic via Redis
 - Horizontally scalable
 
@@ -220,6 +220,8 @@ MyList {
 - Separate list-item collection
 - DB pagination (skip/limit)
 - CDN caching
+- Logging
+- UTs
 
 ---
 
